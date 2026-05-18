@@ -1,0 +1,75 @@
+# ============================================
+# STAR WORKS — Apache Configuration
+# ============================================
+
+# HTTP から HTTPS へのリダイレクト（ConoHa WING は nginx プロキシ経由のため X-Forwarded-Proto で判定）
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP:X-Forwarded-Proto} =http
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# www なし → www あり へのリダイレクト（オプション）
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteCond %{HTTP_HOST} ^starworks.jp$ [NC]
+#   RewriteRule ^(.*)$ https://www.starworks.jp/$1 [L,R=301]
+# </IfModule>
+
+# キャッシュ設定
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # HTML キャッシュ（ブラウザ、1時間）
+  ExpiresByType text/html "access plus 1 hours"
+
+  # CSS・JS キャッシュ（ブラウザ、1ヶ月）
+  ExpiresByType text/css "access plus 1 months"
+  ExpiresByType application/javascript "access plus 1 months"
+
+  # 画像キャッシュ（ブラウザ、1ヶ月）
+  ExpiresByType image/jpeg "access plus 1 months"
+  ExpiresByType image/gif "access plus 1 months"
+  ExpiresByType image/png "access plus 1 months"
+  ExpiresByType image/webp "access plus 1 months"
+  ExpiresByType image/svg+xml "access plus 1 months"
+
+  # デフォルト
+  ExpiresDefault "access plus 2 days"
+</IfModule>
+
+# Gzip 圧縮（転送量削減）
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
+
+# ETag 削除（オプション・キャッシュ最適化）
+<IfModule mod_headers.c>
+  Header unset ETag
+  FileETag None
+</IfModule>
+
+# セキュリティヘッダー
+<IfModule mod_headers.c>
+  # XSS 対策
+  Header set X-XSS-Protection "1; mode=block"
+
+  # クリックジャッキング対策
+  Header set X-Frame-Options "SAMEORIGIN"
+
+  # MIME タイプスニッフィング対策
+  Header set X-Content-Type-Options "nosniff"
+
+  # リファラーポリシー
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# UTF-8 エンコーディング
+AddDefaultCharset utf-8

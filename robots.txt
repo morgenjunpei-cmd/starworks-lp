@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /.DS_Store
+# 注：CSS/JS/画像は Googlebot がレンダリングに使うため /assets/ は許可しています
+
+Sitemap: https://starworks.jp/sitemap.xml
+
+# クローラー制限（オプション）
+Crawl-delay: 1
+User-agent: Googlebot
+Crawl-delay: 0
