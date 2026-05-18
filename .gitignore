@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# アーカイブフォルダ（GitHubには不要）
+_アーカイブ/
+
+# 制作テンプレート（GitHubには不要）
+制作テンプレート/
