@@ -250,6 +250,112 @@
     });
   }
 
+  // ─── サンプルマーキー：手動横スクロール対応 ───
+  document.querySelectorAll('[data-marquee]').forEach(marquee => {
+    const track = marquee.querySelector('.marquee-track');
+    if (!track) return;
+
+    let isDragging = false;
+    let startX = 0;
+    let startTranslate = 0;
+    let currentTranslate = 0;
+    let dragMoved = false;
+    let resumeTimer = null;
+
+    // 現在のtransform値を取得
+    const getCurrentTranslate = () => {
+      const cs = window.getComputedStyle(track);
+      const matrix = cs.transform || cs.webkitTransform;
+      if (matrix === 'none' || !matrix) return 0;
+      try {
+        const m = new DOMMatrixReadOnly(matrix);
+        return m.m41;
+      } catch (e) { return 0; }
+    };
+
+    const pauseAnim = () => {
+      currentTranslate = getCurrentTranslate();
+      track.style.animation = 'none';
+      track.style.transform = `translateX(${currentTranslate}px)`;
+      marquee.classList.add('is-paused');
+    };
+
+    const resumeAnim = () => {
+      // 現在位置から自然に流すため、CSSアニメーションに戻す
+      track.style.transform = '';
+      track.style.animation = '';
+      marquee.classList.remove('is-paused');
+    };
+
+    const scheduleResume = (delay = 2500) => {
+      if (resumeTimer) clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(resumeAnim, delay);
+    };
+
+    // 無限ループ用：トラックの幅の半分を超えたら反対側にラップ
+    const wrapTranslate = () => {
+      const halfWidth = track.scrollWidth / 2;
+      if (currentTranslate <= -halfWidth) currentTranslate += halfWidth;
+      else if (currentTranslate > 0) currentTranslate -= halfWidth;
+    };
+
+    // pointer events for touch + mouse
+    const onPointerDown = (e) => {
+      // 拡大ライトボックスのクリックを優先（カードを直接タップ）：
+      // ただしドラッグ中はクリックを抑止
+      isDragging = true;
+      dragMoved = false;
+      pauseAnim();
+      if (resumeTimer) clearTimeout(resumeTimer);
+      startX = (e.touches ? e.touches[0].clientX : e.clientX);
+      startTranslate = currentTranslate;
+      marquee.classList.add('is-dragging');
+    };
+    const onPointerMove = (e) => {
+      if (!isDragging) return;
+      const x = (e.touches ? e.touches[0].clientX : e.clientX);
+      const dx = x - startX;
+      if (Math.abs(dx) > 5) dragMoved = true;
+      currentTranslate = startTranslate + dx;
+      wrapTranslate();
+      track.style.transform = `translateX(${currentTranslate}px)`;
+    };
+    const onPointerUp = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      marquee.classList.remove('is-dragging');
+      scheduleResume();
+    };
+
+    // クリックをドラッグ後は抑止（ライトボックスが暴発しないように）
+    marquee.addEventListener('click', (e) => {
+      if (dragMoved) {
+        e.stopPropagation();
+        e.preventDefault();
+        dragMoved = false;
+      }
+    }, true);
+
+    // mouse
+    marquee.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+
+    // touch
+    marquee.addEventListener('touchstart', onPointerDown, { passive: true });
+    marquee.addEventListener('touchmove', onPointerMove, { passive: true });
+    marquee.addEventListener('touchend', onPointerUp);
+    marquee.addEventListener('touchcancel', onPointerUp);
+
+    // ホバーでは一時停止、離れたら再開（CSS側でも対応済みだがJS側でも揃える）
+    marquee.addEventListener('mouseenter', () => {
+      if (!isDragging) { pauseAnim(); }
+    });
+    marquee.addEventListener('mouseleave', () => {
+      if (!isDragging) { scheduleResume(300); }
+    });
+  });
+
   // ─── ライトボックス（サンプル画像の拡大表示） ───
   const lightbox = document.getElementById('lightbox');
   if (lightbox) {

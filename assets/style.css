@@ -963,7 +963,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   position: absolute;
   top: 0; right: -10%;
   width: 50%; height: 70%;
-  background: radial-gradient(circle, rgba(31,179,168,.06) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(31,179,168,.02) 0%, transparent 60%);
   pointer-events: none;
 }
 .story-section::after {
@@ -971,7 +971,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   position: absolute;
   bottom: 0; left: -10%;
   width: 40%; height: 60%;
-  background: radial-gradient(circle, rgba(232,197,71,.05) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(232,197,71,.02) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -1076,7 +1076,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .approach-section {
   background: var(--navy);
-  padding: clamp(60px, 7vw, 90px) 8%;
+  padding: clamp(50px, 5vw, 70px) 8%;
 }
 .approach-section .sec-label { color: var(--teal-light); }
 .approach-section .sec-title { color: var(--white); }
@@ -1922,8 +1922,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .main { grid-column: 1; padding-top: var(--header-h-mb); }
   .hero { padding-top: calc(var(--header-h-mb) + 2rem); min-height: calc(100vh - var(--header-h-mb)); }
   .page-hero { padding-top: calc(var(--header-h-mb) + 50px); }
-  .section, .why-section, .plans-section, .flow-section, .qa-section, .contact-section, .trouble-section, .story-section, .approach-section, .preview-section {
+  .section, .why-section, .plans-section, .flow-section, .qa-section, .contact-section, .trouble-section, .story-section, .preview-section {
     padding: 70px 6%;
+  }
+  .approach-section {
+    padding: 50px 6%;
   }
   .story-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .story-visual { max-width: 360px; margin: 0 auto; aspect-ratio: 1; }
@@ -1988,8 +1991,27 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .plan-feats li { font-size: .85rem; padding: .35rem 0; }
 
   /* スマホで preview-grid とその他のグリッドも 1列に */
-  .preview-grid { grid-template-columns: 1fr; gap: 1.2rem; }
-  .preview-card { padding: 1.5rem 1.4rem; }
+  .preview-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .preview-card {
+    padding: 1.3rem 1.4rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto auto;
+    column-gap: 1rem;
+    align-items: start;
+    border-left: 4px solid var(--teal);
+  }
+  .preview-card .pv-en { grid-column: 1; grid-row: 1; margin-bottom: .2rem; }
+  .preview-card .pv-name { grid-column: 1; grid-row: 2; font-size: 1rem; margin-bottom: .3rem; }
+  .preview-card .pv-price { grid-column: 2; grid-row: 1 / 3; font-size: 1.25rem; margin: 0; padding: 0; border: none; align-self: center; text-align: right; }
+  .preview-card p { grid-column: 1 / 3; grid-row: 3; margin-bottom: .8rem; margin-top: .6rem; font-size: .83rem; }
+  .preview-card .pv-link { grid-column: 1 / 3; grid-row: 4; font-size: .82rem; }
+
+  /* フロー（ステップ）セクションは横スクロール対応 */
+  .flow-grid { display: flex; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; gap: .8rem; padding-bottom: .8rem; }
+  .flow-step { flex: 0 0 calc(100% - 1.6rem); min-width: 260px; padding: 1.8rem 1.2rem; }
+  .flow-step h3 { font-size: 1rem; }
+  .flow-step p { font-size: .8rem; }
 
   /* メンテナンスもコンパクトに */
   .mt-grid { grid-template-columns: 1fr; gap: 1rem; }
@@ -2985,3 +3007,416 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .thanks-box { padding: 40px 20px; }
   .thanks-title { font-size: 1.3rem; }
 }
+
+/* ============================================
+   ▼ 2026-05-19 追補：スマホ最適化・改行制御・タイポ改善
+   ============================================ */
+
+/* ── 日本語の改行制御 共通 ── */
+.sec-title, .sec-sub,
+.hero-title, .hero-sub,
+.trouble-card h3, .trouble-card p,
+.why-card h3, .why-card p,
+.funnel-card h3, .funnel-card p,
+.industry-note,
+.approach-card h3, .approach-card p,
+.preview-card p,
+.about-title, .about-body p,
+.about-quote p,
+.plan-tagline, .rn-tagline,
+.plan-fit .fit-text,
+.qa-question, .qa-answer,
+.page-title, .page-sub,
+.tb-desc,
+.story-headline,
+.renewal-note p,
+.flow-step p,
+.mt-head p,
+.mt-card ul li,
+.plan-feats li, .rn-feats li {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-break: strict;
+}
+
+/* ユーティリティ：折り返さないテキスト */
+.nobr { white-space: nowrap; display: inline-block; }
+
+/* ユーティリティ：PC専用改行（スマホでは消える） */
+.pc-br { display: inline; }
+@media (max-width: 768px) { .pc-br { display: none; } }
+
+/* ユーティリティ：スマホ専用改行（PCでは消える） */
+.sp-br { display: none; }
+@media (max-width: 768px) { .sp-br { display: inline; } }
+
+/* ============================================
+   ▼ スマホ用タイポグラフィ・余白の引き締め
+   ============================================ */
+@media (max-width: 768px) {
+  body {
+    font-feature-settings: "palt";
+    letter-spacing: .02em;
+  }
+
+  /* 既存の <br> を全体的に弱める：本文中の改行はスマホでは無効化 */
+  .hero-sub br,
+  .sec-sub br,
+  .page-sub br,
+  .tb-desc br,
+  .trouble-card p br,
+  .why-card p br,
+  .funnel-card p br,
+  .approach-card p br,
+  .industry-note br,
+  .preview-card p br,
+  .about-body p br,
+  .about-quote p br,
+  .plan-tagline br,
+  .rn-tagline br,
+  .plan-fit .fit-text br,
+  .renewal-note p br,
+  .flow-step p br,
+  .mt-head p br {
+    display: none;
+  }
+
+  /* セクション見出し */
+  .sec-title {
+    font-size: 1.5rem;
+    line-height: 1.5;
+    letter-spacing: .01em;
+  }
+  .sec-sub {
+    font-size: .9rem;
+    line-height: 1.85;
+    padding: 0 .2rem;
+  }
+  .sec-head { margin-bottom: 2.4rem; }
+
+  /* セクション横padding */
+  .trouble-section,
+  .why-section,
+  .industry-section,
+  .funnel-section,
+  .approach-section,
+  .preview-section,
+  .samples-section,
+  .plans-section,
+  .renewal-section,
+  .flow-section,
+  .story-section,
+  .compare-section {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  /* hero */
+  .hero-title { font-size: 1.85rem; line-height: 1.5; }
+  .hero-sub { font-size: .92rem; line-height: 1.9; margin-bottom: 1.8rem; }
+  .hero-target-tag { font-size: .76rem; padding: .35rem .9rem; margin-bottom: 1rem; }
+
+  /* ページヒーロー */
+  .page-hero { padding: 100px 5% 50px; }
+  .page-title { font-size: 1.7rem; line-height: 1.45; }
+  .page-sub { font-size: .92rem; line-height: 1.85; }
+
+  /* ストーリー見出し */
+  .story-headline { font-size: 1.5rem; line-height: 1.5; }
+  .about-title { font-size: 1.25rem; line-height: 1.55; margin-bottom: 1.4rem; }
+  .about-num { font-size: 3.2rem; margin-bottom: .4rem; }
+  .about-body p { font-size: .94rem; line-height: 2; margin-bottom: 1rem; }
+
+  /* trouble */
+  .trouble-card { padding: 1.4rem 1.2rem; }
+  .trouble-card h3 { font-size: .98rem; }
+  .trouble-card p { font-size: .85rem; line-height: 1.8; }
+  .trouble-grid { gap: 1rem; }
+
+  .trust-banner { margin-top: 3rem; padding: 2rem 1.2rem; }
+  .trust-banner .tb-main { gap: 0 .06em; line-height: 1.5; flex-wrap: nowrap; justify-content: center; }
+  .trust-banner .tb-lead { font-size: .95rem; display: inline; }
+  .trust-banner .tb-brand { font-size: 1.6rem; }
+  .trust-banner .tb-end { font-size: .95rem; display: inline; }
+  .trust-banner .tb-desc { font-size: .85rem; line-height: 1.9; margin-top: .8rem; padding-top: .8rem; }
+
+  /* why card */
+  .why-card { padding: 1.4rem 1.2rem; }
+  .why-card h3 { font-size: 1.05rem; line-height: 1.5; }
+  .why-card p { font-size: .88rem; line-height: 1.85; }
+
+  /* funnel */
+  .funnel-card { padding: 1.6rem 1.3rem; }
+  .funnel-card h3 { font-size: 1rem; }
+  .funnel-card p { font-size: .87rem; line-height: 1.85; }
+
+  /* industry */
+  .industry-grid { gap: .8rem; }
+  .industry-card { padding: 1.2rem .8rem; }
+  .industry-card .ind-icon { width: 44px; height: 44px; margin-bottom: .5rem; }
+  .industry-card .ind-icon svg { width: 24px; height: 24px; }
+  .industry-card .ind-name { font-size: .85rem; }
+  .industry-note { font-size: .82rem; margin-top: 1.4rem; line-height: 1.8; padding: 0 .2rem; }
+
+  /* approach */
+  .approach-card { padding: 1.6rem 1.2rem; }
+  .approach-card .ap-num { font-size: 2.4rem; line-height: 1; margin-bottom: .4rem; }
+  .approach-card .ap-line { margin: .5rem 0 .8rem; }
+  .approach-card .ap-title { font-size: 1rem; line-height: 1.55; margin-bottom: .5rem; }
+  .approach-card p { font-size: .88rem; line-height: 1.85; }
+
+  /* preview */
+  .preview-card { padding: 1.6rem 1.4rem; }
+  .preview-card p { font-size: .88rem; line-height: 1.85; }
+
+  /* story */
+  .story-grid { padding: 0; }
+  .story-text p { font-size: .92rem; line-height: 1.95; }
+
+  /* plans */
+  .plan-card { padding: 1.6rem 1.2rem; }
+  .plan-tagline { font-size: .9rem; line-height: 1.7; }
+  .plan-fit { padding: .8rem 1rem; }
+  .plan-fit .fit-text { font-size: .85rem; line-height: 1.7; }
+  .plan-feats li { font-size: .87rem; line-height: 1.7; }
+
+  /* renewal */
+  .renewal-card { padding: 1.6rem 1.2rem; }
+  .rn-tagline { font-size: .9rem; line-height: 1.7; }
+  .rn-feats li { font-size: .87rem; line-height: 1.7; }
+  .renewal-note { padding: 1.4rem 1.2rem; }
+  .renewal-note p { font-size: .9rem; line-height: 1.95; }
+
+  /* maintenance */
+  .mt-section { padding: 0; }
+  .mt-head h3 { font-size: 1.2rem; }
+  .mt-head p { font-size: .9rem; line-height: 1.85; }
+  .mt-card { padding: 1.4rem 1.2rem; }
+  .mt-card ul li { font-size: .87rem; line-height: 1.75; }
+
+  /* flow */
+  .flow-step { padding: 1.6rem 1.2rem; }
+  .flow-step h3 { font-size: 1.05rem; }
+  .flow-step p { font-size: .88rem; line-height: 1.85; }
+
+  /* qa */
+  .qa-question { font-size: .95rem; line-height: 1.6; }
+  .qa-answer { font-size: .9rem; line-height: 1.9; }
+
+  /* CTAセクション */
+  .section h2 {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ============================================
+   ▼ プラン比較表：スマホでカードレイアウト化
+   ============================================ */
+@media (max-width: 768px) {
+  .compare-wrap {
+    overflow: visible;
+    border: none;
+    margin-top: 1.6rem;
+  }
+  .compare-table {
+    min-width: 0;
+    width: 100%;
+    display: block;
+  }
+  .compare-table thead { display: none; }
+  .compare-table tbody { display: block; }
+  /* 各列を縦カード化：項目行ごとに3プランを列で並べる */
+  .compare-table tbody tr {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: .7rem;
+    background: #fff;
+    overflow: hidden;
+  }
+  .compare-table tbody tr:first-child {
+    background: var(--navy);
+    color: #fff;
+  }
+  .compare-table tbody tr:first-child td {
+    background: transparent !important;
+    color: #fff !important;
+    font-weight: 700;
+    border-bottom: none;
+  }
+  .compare-table td {
+    padding: .55rem .4rem;
+    font-size: .78rem;
+    text-align: center;
+    border-bottom: none;
+    line-height: 1.4;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    background: transparent;
+  }
+  .compare-table td:first-child {
+    text-align: left;
+    padding-left: .8rem;
+    font-size: .8rem;
+    font-weight: 700;
+    background: #f6f8fb !important;
+    border-right: 1px solid var(--border);
+  }
+  .compare-table .cm-rec {
+    background: linear-gradient(180deg, var(--teal-soft) 0%, rgba(255,255,255,0) 100%);
+  }
+  .compare-table .cm-yes { font-size: .95rem; }
+  /* 1行目（ヘッダ）にはプラン名を表示 */
+  .compare-table tbody tr:first-child td:first-child::after {
+    content: " ▼";
+    font-size: .65rem;
+    opacity: .6;
+  }
+}
+
+/* ============================================
+   ▼ サンプルマーキー：手動横スクロール対応
+   ============================================ */
+.marquee {
+  cursor: grab;
+}
+.marquee.is-paused .marquee-track {
+  animation-play-state: paused;
+}
+.marquee.is-dragging {
+  cursor: grabbing;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.marquee.is-dragging .marquee-track {
+  animation: none;
+}
+@media (max-width: 768px) {
+  .marquee { padding-bottom: .4rem; }
+  .marquee-track { gap: .9rem; }
+  .sample-card { width: 75vw; max-width: 320px; }
+  .marquee-hint { font-size: .76rem; padding: 0 .6rem; line-height: 1.7; }
+}
+
+/* ============================================
+   ▼ モバイルヘッダー：ロゴ強化
+   ============================================ */
+@media (max-width: 880px) {
+  .mb-header {
+    background: rgba(255,255,255,.96);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 8px rgba(13,36,71,.06);
+    border-bottom: 1px solid rgba(230,234,240,.7);
+  }
+  .mb-header img {
+    height: 36px;
+  }
+  /* ヒーローのロゴ表示はそのまま、追加でブランドネームを表示する補助は不要 */
+}
+
+/* ============================================
+   ▼ フッターのロゴ：スマホでも明確に
+   ============================================ */
+@media (max-width: 768px) {
+  .footer-grid { gap: 2rem; text-align: center; }
+  .footer-brand img { margin: 0 auto .8rem; max-width: 160px; }
+  .footer-brand p { font-size: .85rem; line-height: 1.9; }
+  .footer-col h4 { margin-bottom: .8rem; }
+  .footer-col a, .footer-col p { font-size: .9rem; }
+}
+
+/* ============================================
+   ▼ ヒーローバッジを「業務内容が一目で分かる」形に
+   ============================================ */
+.hero-biz-line {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  background: linear-gradient(135deg, rgba(31,179,168,.18) 0%, rgba(232,197,71,.12) 100%);
+  border: 1px solid rgba(31,179,168,.35);
+  color: #fff;
+  padding: .35rem 1rem;
+  border-radius: 100px;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  margin-bottom: 1rem;
+}
+.hero-biz-line .pin {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--teal-light);
+  box-shadow: 0 0 8px var(--teal-light);
+}
+@media (max-width: 768px) {
+  .hero-biz-line { font-size: .72rem; padding: .3rem .8rem; }
+}
+
+/* ============================================
+   ▼ ヒーロー：業務内容の説明テキスト（強調）
+   ============================================ */
+.hero-what {
+  display: block;
+  font-size: clamp(.85rem, 1.4vw, 1rem);
+  font-weight: 600;
+  color: var(--teal-light);
+  letter-spacing: .05em;
+  margin-bottom: 1.4rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--teal-light);
+  line-height: 1.7;
+}
+@media (max-width: 768px) {
+  .hero-what {
+    font-size: .82rem;
+    margin-bottom: 1rem;
+    padding-left: .7rem;
+  }
+}
+
+/* ============================================
+   ▼ 強調マーカー（重要箇所） & スマホ強調
+   ============================================ */
+.hl-mark {
+  background: linear-gradient(180deg, transparent 58%, rgba(232,197,71,.45) 58%);
+  font-weight: 700;
+  padding: 0 .15em;
+}
+
+/* ============================================
+   ▼ Approach (仕事の流儀)：番号と本文の間隔を引き締め
+   ============================================ */
+@media (max-width: 768px) {
+  .approach-grid { gap: 1rem; }
+  .approach-card .ap-num { margin-bottom: .2rem; }
+}
+
+/* ============================================
+   ▼ サイドバー：スマホメニュー時のロゴ
+   ============================================ */
+@media (max-width: 880px) {
+  .sidebar .sidebar-logo img { max-width: 150px; }
+}
+
+/* ============================================
+   ▼ どこにロゴが入っていないか対策：
+       メインヒーロー以外の各セクション末尾の任意配置はHTMLで対応
+   ============================================ */
+.section-logo {
+  text-align: center;
+  margin: 0 auto 1rem;
+  opacity: .9;
+}
+.section-logo img {
+  max-width: 140px;
+  margin: 0 auto;
+  filter: drop-shadow(0 6px 18px rgba(13,36,71,.08));
+}
+@media (max-width: 768px) {
+  .section-logo img { max-width: 110px; }
+}
+
